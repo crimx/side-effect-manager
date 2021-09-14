@@ -1,6 +1,6 @@
 {
   "name": "side-effect-manager",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "description": "A tiny library to encapsulate side effects in a compact, reusable and testable style.",
   "license": "MIT",
