@@ -9,7 +9,7 @@
   "sideEffects": false,
   "main": "./dist/side-effect-manager.cjs.js",
   "module": "./dist/side-effect-manager.es.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/side-effect-manager.d.ts",
   "files": [
     "src",
     "dist"
@@ -19,8 +19,8 @@
     "test": "jest --coverage",
     "docs": "typedoc --includeVersion --excludePrivate --out docs src/side-effect-manager.ts",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
-    "build": "vite build && yarn run types",
-    "build:dev": "vite build --mode development && yarn run types",
+    "build": "vite build && npm run types",
+    "build:dev": "vite build --mode development && npm run types",
     "release": "standard-version"
   },
   "devDependencies": {
