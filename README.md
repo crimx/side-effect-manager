@@ -108,7 +108,7 @@ sideEffect.remove(disposerID);
 sideEffect.flush(disposerID);
 ```
 
-A `disposerID` can also be set deliberately. Side effects with the same ID will be flushed before add a new one.
+A `disposerID` can also be set deliberately. Side effects with the same ID will be flushed before adding a new one.
 
 ```js
 function debounce(handler, timeout) {
