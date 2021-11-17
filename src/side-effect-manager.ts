@@ -1,3 +1,7 @@
+import { genUID } from "./gen-uid";
+
+export { genUID } from "./gen-uid";
+
 export type SideEffectDisposer = () => void;
 
 export class SideEffectManager {
@@ -9,7 +13,7 @@ export class SideEffectManager {
    */
   public add(
     executor: () => SideEffectDisposer,
-    disposerID: string = this.genDisposerID()
+    disposerID: string = genUID()
   ): string {
     this.flush(disposerID);
     this.disposers.set(disposerID, executor());
@@ -51,7 +55,7 @@ export class SideEffectManager {
     type: string,
     listener: (this: HTMLElement | Window | Document, ev: Event) => unknown,
     options?: boolean | AddEventListenerOptions,
-    disposerID = this.genDisposerID()
+    disposerID = genUID()
   ): string {
     this.add(() => {
       el.addEventListener(type, listener, options);
@@ -70,7 +74,7 @@ export class SideEffectManager {
   public setTimeout(
     handler: () => void,
     timeout: number,
-    disposerID: string = this.genDisposerID()
+    disposerID: string = genUID()
   ): string {
     return this.add(() => {
       const ticket = window.setTimeout(() => {
@@ -91,7 +95,7 @@ export class SideEffectManager {
   public setInterval(
     handler: () => void,
     timeout: number,
-    disposerID: string = this.genDisposerID()
+    disposerID: string = genUID()
   ): string {
     return this.add(() => {
       const ticket = window.setInterval(handler, timeout);
@@ -142,15 +146,4 @@ export class SideEffectManager {
    * All disposers. Use this only when you know what you are doing.
    */
   public readonly disposers = new Map<string, SideEffectDisposer>();
-
-  /**
-   * Generate a disposerID.
-   */
-  public genDisposerID(): string {
-    const { MAX_SAFE_INTEGER = 9007199254740991 } = Number;
-    this.disposerIDGenCount = (this.disposerIDGenCount + 1) % MAX_SAFE_INTEGER;
-    return `disposer-${this.disposerIDGenCount}`;
-  }
-
-  private disposerIDGenCount = -1;
 }

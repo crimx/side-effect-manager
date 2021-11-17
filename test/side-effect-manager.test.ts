@@ -1,4 +1,4 @@
-import { SideEffectManager } from "../src/side-effect-manager";
+import { genUID, SideEffectManager } from "../src/side-effect-manager";
 
 describe("add", () => {
   it("should add a side effect", () => {
@@ -359,33 +359,14 @@ describe("flushAll", () => {
 
 describe("genDisposerID", () => {
   it("should return a id", () => {
-    const sideEffect = new SideEffectManager();
     const ids = new Set();
     const count = 1000;
 
     for (let i = 0; i < count; i++) {
-      ids.add(sideEffect.genDisposerID());
+      ids.add(genUID());
     }
 
     expect(ids.size).toBe(count);
-  });
-
-  it("should work without Number.MAX_SAFE_INTEGER", () => {
-    const spy = jest.spyOn(window, "Number").mockImplementation(() => {
-      return { MAX_SAFE_INTEGER: undefined } as unknown as number;
-    });
-
-    const sideEffect = new SideEffectManager();
-    const ids = new Set();
-    const count = 1000;
-
-    for (let i = 0; i < count; i++) {
-      ids.add(sideEffect.genDisposerID());
-    }
-
-    expect(ids.size).toBe(count);
-
-    spy.mockRestore();
   });
 });
 
