@@ -21,6 +21,21 @@ export class SideEffectManager {
   }
 
   /**
+   * Add a disposer directly.
+   * @param disposer a disposer
+   * @param disposerID Optional id for the disposer
+   * @returns disposerID
+   */
+  public addDisposer(
+    disposer: SideEffectDisposer,
+    disposerID: string = genUID()
+  ): string {
+    this.flush(disposerID);
+    this.disposers.set(disposerID, disposer);
+    return disposerID;
+  }
+
+  /**
    * Sugar for addEventListener.
    * @param el
    * @param type
