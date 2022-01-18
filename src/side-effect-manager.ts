@@ -65,8 +65,15 @@ export class SideEffectManager {
     options?: boolean | AddEventListenerOptions,
     disposerID?: string
   ): string;
+  public addEventListener<K extends keyof MediaQueryListEventMap>(
+    el: MediaQueryList,
+    type: K,
+    listener: (this: HTMLElement, ev: MediaQueryListEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+    disposerID?: string
+  ): string;
   public addEventListener(
-    el: HTMLElement | Window | Document,
+    el: HTMLElement | Window | Document | MediaQueryList,
     type: string,
     listener: (this: HTMLElement | Window | Document, ev: Event) => unknown,
     options?: boolean | AddEventListenerOptions,
