@@ -6,21 +6,6 @@ export type SideEffectDisposer = () => void;
 
 export class SideEffectManager {
   /**
-   * Add a side effect.
-   * @param executor execute side effect
-   * @param disposerID Optional id for the disposer
-   * @returns disposerID
-   */
-  public add(
-    executor: () => SideEffectDisposer,
-    disposerID: string = genUID()
-  ): string {
-    this.flush(disposerID);
-    this.disposers.set(disposerID, executor());
-    return disposerID;
-  }
-
-  /**
    * Add a disposer directly.
    * @param disposer a disposer
    * @param disposerID Optional id for the disposer
@@ -33,6 +18,19 @@ export class SideEffectManager {
     this.flush(disposerID);
     this.disposers.set(disposerID, disposer);
     return disposerID;
+  }
+
+  /**
+   * Add a side effect.
+   * @param executor execute side effect
+   * @param disposerID Optional id for the disposer
+   * @returns disposerID
+   */
+  public add(
+    executor: () => SideEffectDisposer,
+    disposerID: string = genUID()
+  ): string {
+    return this.addDisposer(executor(), disposerID);
   }
 
   /**
@@ -79,10 +77,11 @@ export class SideEffectManager {
     options?: boolean | AddEventListenerOptions,
     disposerID = genUID()
   ): string {
-    this.add(() => {
-      el.addEventListener(type, listener, options);
-      return () => el.removeEventListener(type, listener, options);
-    }, disposerID);
+    el.addEventListener(type, listener, options);
+    this.addDisposer(
+      () => el.removeEventListener(type, listener, options),
+      disposerID
+    );
     return disposerID;
   }
 
@@ -98,13 +97,11 @@ export class SideEffectManager {
     timeout: number,
     disposerID: string = genUID()
   ): string {
-    return this.add(() => {
-      const ticket = window.setTimeout(() => {
-        this.remove(disposerID);
-        handler();
-      }, timeout);
-      return () => window.clearTimeout(ticket);
-    }, disposerID);
+    const ticket = window.setTimeout(() => {
+      this.remove(disposerID);
+      handler();
+    }, timeout);
+    return this.addDisposer(() => window.clearTimeout(ticket), disposerID);
   }
 
   /**
@@ -119,10 +116,8 @@ export class SideEffectManager {
     timeout: number,
     disposerID: string = genUID()
   ): string {
-    return this.add(() => {
-      const ticket = window.setInterval(handler, timeout);
-      return () => window.clearInterval(ticket);
-    }, disposerID);
+    const ticket = window.setInterval(handler, timeout);
+    return this.addDisposer(() => window.clearInterval(ticket), disposerID);
   }
 
   /**
