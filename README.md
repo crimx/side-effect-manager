@@ -7,6 +7,7 @@
 [![Build Status](https://github.com/crimx/side-effect-manager/actions/workflows/build.yml/badge.svg)](https://github.com/crimx/side-effect-manager/actions/workflows/build.yml)
 [![npm-version](https://img.shields.io/npm/v/side-effect-manager.svg)](https://www.npmjs.com/package/side-effect-manager)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/side-effect-manager/main)](https://coveralls.io/github/crimx/side-effect-manager?branch=main)
+[![minified-size](https://img.shields.io/bundlephobia/minzip/side-effect-manager)](https://bundlephobia.com/package/side-effect-manager)
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?maxAge=2592000)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
