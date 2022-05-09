@@ -1,4 +1,4 @@
-import { genUID, SideEffectManager } from "../src/side-effect-manager";
+import { SideEffectManager } from "../src";
 
 describe("add", () => {
   it("should add a side effect", () => {
@@ -415,19 +415,6 @@ describe("flushAll", () => {
     expect(window.console.error).toBeCalledWith(error2);
 
     spy.mockRestore();
-  });
-});
-
-describe("genDisposerID", () => {
-  it("should return a id", () => {
-    const ids = new Set();
-    const count = 1000;
-
-    for (let i = 0; i < count; i++) {
-      ids.add(genUID());
-    }
-
-    expect(ids.size).toBe(count);
   });
 });
 

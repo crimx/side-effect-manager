@@ -1,7 +1,5 @@
 import { genUID } from "./gen-uid";
 
-export { genUID } from "./gen-uid";
-
 export type SideEffectDisposer = () => void;
 
 export class SideEffectManager {
