@@ -9,7 +9,7 @@
   "sideEffects": false,
   "main": "./dist/side-effect-manager.cjs.js",
   "module": "./dist/side-effect-manager.es.js",
-  "types": "./dist/side-effect-manager.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "src",
     "dist"

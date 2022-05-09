@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   return {
     build: {
       lib: {
-        entry: path.resolve(__dirname, "src/side-effect-manager.ts"),
+        entry: path.resolve(__dirname, "src/index.ts"),
         formats: ["es", "cjs"],
       },
       outDir: "dist",
