@@ -13,7 +13,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-A tiny library to encapsulate side effects in a compact, reusable and testable style.
+A tiny library to encapsulate side effects in a compact, reusable, testable and TypeScript-friendly style.
 
 ## Install
 
@@ -59,11 +59,6 @@ class MyClass {
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     });
-
-    // or simply like this
-    this.sideEffect.addEventListener(window, "resize", () => {
-      console.log("resize");
-    });
   }
 
   destroy() {
@@ -72,7 +67,17 @@ class MyClass {
 }
 ```
 
+Or simply like this:
+
+```js
+this.sideEffect.addEventListener(window, "resize", () => {
+  console.log("resize");
+});
+```
+
 Not only the code is more compact and readable, variables can now be compressed as they are not properties.
+
+Also the typing of listener can now be inferred from method so it is also more TypeScript friendly without the need to declare listener type specifically.
 
 ## Usage
 
@@ -115,4 +120,51 @@ A `disposerID` can also be set deliberately. Side effects with the same ID will 
 function debounce(handler, timeout) {
   sideEffect.setTimeout(handler, timeout, "my-timeout");
 }
+```
+
+### Async Side Effects
+
+Similar to `SideEffectManager`, `AsyncSideEffectManager` can also handle async side effect cleanup nicely.
+
+```js
+import { AsyncSideEffectManager } from "side-effect-manager";
+
+const asyncSideEffect = new AsyncSideEffectManager();
+
+asyncSideEffect.add(async () => {
+  // async side effect
+
+  return async () => {
+    // async cleanup
+  };
+});
+```
+
+Yon can add or flush side effects with the same ID repeatably. `AsyncSideEffectManager` will correctly schedule tasks and skip unnecessary tasks automatically.
+
+```js
+const disposerID = asyncSideEffect.add(async () => {
+  // async side effect
+
+  return async () => {
+    // async cleanup
+  };
+});
+
+// Add side effect with same ID
+asyncSideEffect.add(async () => {
+  // async side effect
+
+  return async () => {
+    // async cleanup
+  };
+}, disposerID);
+
+asyncSideEffect.flush(disposerID);
+```
+
+You can always `await asyncSideEffect.finished` which will be updated and resolved after all tasks are finished.
+
+```js
+await asyncSideEffect.finished;
 ```
