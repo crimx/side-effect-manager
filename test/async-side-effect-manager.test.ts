@@ -556,3 +556,14 @@ describe("flushAll", () => {
     spy.mockRestore();
   });
 });
+
+describe("genUID", () => {
+  it("should gen uid", () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const count = 10000;
+    for (let i = 0; i < count; i++) {
+      sideEffect.add(() => () => void 0, sideEffect.genUID());
+    }
+    expect(sideEffect.disposers.size === count);
+  });
+});

@@ -11,7 +11,7 @@ export class SideEffectManager {
    */
   public addDisposer(
     disposer: SideEffectDisposer,
-    disposerID: string = genUID()
+    disposerID: string = this.genUID()
   ): string {
     this.flush(disposerID);
     this.disposers.set(disposerID, disposer);
@@ -26,7 +26,7 @@ export class SideEffectManager {
    */
   public add(
     executor: () => SideEffectDisposer,
-    disposerID: string = genUID()
+    disposerID: string = this.genUID()
   ): string {
     return this.addDisposer(executor(), disposerID);
   }
@@ -73,7 +73,7 @@ export class SideEffectManager {
     type: string,
     listener: (this: HTMLElement | Window | Document, ev: Event) => unknown,
     options?: boolean | AddEventListenerOptions,
-    disposerID = genUID()
+    disposerID = this.genUID()
   ): string {
     el.addEventListener(type, listener, options);
     this.addDisposer(
@@ -93,7 +93,7 @@ export class SideEffectManager {
   public setTimeout(
     handler: () => void,
     timeout: number,
-    disposerID: string = genUID()
+    disposerID: string = this.genUID()
   ): string {
     const ticket = window.setTimeout(() => {
       this.remove(disposerID);
@@ -112,7 +112,7 @@ export class SideEffectManager {
   public setInterval(
     handler: () => void,
     timeout: number,
-    disposerID: string = genUID()
+    disposerID: string = this.genUID()
   ): string {
     const ticket = window.setInterval(handler, timeout);
     return this.addDisposer(() => window.clearInterval(ticket), disposerID);
@@ -161,4 +161,12 @@ export class SideEffectManager {
    * All disposers. Use this only when you know what you are doing.
    */
   public readonly disposers = new Map<string, SideEffectDisposer>();
+
+  public genUID(): string {
+    let uid: string;
+    do {
+      uid = genUID();
+    } while (this.disposers.has(uid));
+    return uid;
+  }
 }

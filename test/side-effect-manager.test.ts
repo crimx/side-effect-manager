@@ -575,3 +575,14 @@ describe("setInterval", () => {
     expect(sideEffect.disposers.size).toBe(0);
   });
 });
+
+describe("genUID", () => {
+  it("should gen uid", () => {
+    const sideEffect = new SideEffectManager();
+    const count = 10000;
+    for (let i = 0; i < count; i++) {
+      sideEffect.add(() => () => void 0, sideEffect.genUID());
+    }
+    expect(sideEffect.disposers.size === count);
+  });
+});

@@ -15,7 +15,7 @@ export class AsyncSideEffectManager {
    */
   public add(
     executor: AsyncSideEffectExecutor,
-    disposerID: string = genUID()
+    disposerID: string = this.genUID()
   ): string {
     if (this._isRunning.has(disposerID)) {
       this._nextTask.set(disposerID, () => this._add(executor, disposerID));
@@ -113,6 +113,14 @@ export class AsyncSideEffectManager {
    * All disposers. Use this only when you know what you are doing.
    */
   public readonly disposers = new Map<string, AsyncSideEffectDisposer>();
+
+  public genUID(): string {
+    let uid: string;
+    do {
+      uid = genUID();
+    } while (this.disposers.has(uid));
+    return uid;
+  }
 
   private readonly _nextTask = new Map<string, () => any>();
   private readonly _isRunning = new Set<string>();
