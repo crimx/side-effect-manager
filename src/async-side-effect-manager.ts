@@ -56,6 +56,19 @@ export class AsyncSideEffectManager {
   }
 
   /**
+   * Add a disposer directly.
+   * @param disposer a disposer
+   * @param disposerID Optional id for the disposer
+   * @returns disposerID
+   */
+  public addDisposer(
+    disposer: AsyncSideEffectDisposer,
+    disposerID: string = this.genUID()
+  ): string {
+    return this.add(() => disposer, disposerID);
+  }
+
+  /**
    * Remove but not run the disposer. Do nothing if not found.
    * @param disposerID
    */

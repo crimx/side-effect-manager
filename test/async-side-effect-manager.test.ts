@@ -179,6 +179,79 @@ describe("add", () => {
   });
 });
 
+describe("addDisposer", () => {
+  it("should add a disposer", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const disposer = jest.fn();
+
+    sideEffect.addDisposer(disposer);
+
+    await sideEffect.finished;
+
+    expect(disposer).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+  });
+
+  it("should add two disposers", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const disposer1 = jest.fn();
+    const disposer2 = jest.fn();
+
+    sideEffect.addDisposer(disposer1);
+
+    await sideEffect.finished;
+
+    expect(disposer1).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+
+    sideEffect.addDisposer(disposer2);
+
+    await sideEffect.finished;
+
+    expect(disposer2).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(2);
+  });
+
+  it("should return disposerID when adding a disposer", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const disposer = jest.fn();
+
+    const disposerID = sideEffect.addDisposer(disposer);
+
+    await sideEffect.finished;
+
+    expect(disposer).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+    expect(sideEffect.disposers.get(disposerID)).toBe(disposer);
+  });
+
+  it("should flush effect with same id when adding a disposer", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const disposer = jest.fn();
+
+    const disposerID = sideEffect.addDisposer(() => disposer("dispose1"));
+
+    await sideEffect.finished;
+
+    expect(disposer).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+
+    disposer.mockReset();
+
+    const disposerID2 = sideEffect.addDisposer(
+      () => disposer("dispose2"),
+      disposerID
+    );
+
+    await sideEffect.finished;
+
+    expect(disposerID2).toBe(disposerID);
+    expect(disposer).toBeCalledTimes(1);
+    expect(disposer).lastCalledWith("dispose1");
+    expect(sideEffect.disposers.size).toBe(1);
+  });
+});
+
 describe("remove", () => {
   it("should remove a side effect", async () => {
     const sideEffect = new AsyncSideEffectManager();
