@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/crimx/side-effect-manager/compare/v0.1.6...v1.1.0) (2022-06-06)
+
+
+### Features
+
+* add disposer list support ([41f3ce7](https://github.com/crimx/side-effect-manager/commit/41f3ce7596031696066ccd4a92c9e4183d91204e))
+
 ### [0.1.6](https://github.com/crimx/side-effect-manager/compare/v0.1.5...v0.1.6) (2022-05-09)
 
 
