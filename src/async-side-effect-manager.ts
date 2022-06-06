@@ -1,10 +1,12 @@
 import { genUID } from "./gen-uid";
+import { invoke } from "./utils";
 
-export type AsyncSideEffectDisposer = () => Promise<void> | void;
+export type AsyncSideEffectDisposer = () => Promise<any> | any;
 
 export type AsyncSideEffectExecutor = () =>
-  | Promise<AsyncSideEffectDisposer>
-  | AsyncSideEffectDisposer;
+  | Promise<AsyncSideEffectDisposer | AsyncSideEffectDisposer[]>
+  | AsyncSideEffectDisposer
+  | AsyncSideEffectDisposer[];
 
 export class AsyncSideEffectManager {
   /**
@@ -41,7 +43,13 @@ export class AsyncSideEffectManager {
     }
 
     try {
-      this.disposers.set(disposerID, await executor());
+      const disposers = await executor();
+      this.disposers.set(
+        disposerID,
+        Array.isArray(disposers)
+          ? async () => Promise.all(disposers.map(invoke))
+          : disposers
+      );
     } catch (e) {
       console.error(e);
     }
@@ -62,7 +70,7 @@ export class AsyncSideEffectManager {
    * @returns disposerID
    */
   public addDisposer(
-    disposer: AsyncSideEffectDisposer,
+    disposer: AsyncSideEffectDisposer | AsyncSideEffectDisposer[],
     disposerID: string = this.genUID()
   ): string {
     return this.add(() => disposer, disposerID);

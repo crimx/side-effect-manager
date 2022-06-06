@@ -1,31 +1,35 @@
 import { genUID } from "./gen-uid";
+import { invoke } from "./utils";
 
-export type SideEffectDisposer = () => void;
+export type SideEffectDisposer = () => any;
 
 export class SideEffectManager {
   /**
    * Add a disposer directly.
-   * @param disposer a disposer
+   * @param disposer a disposer or a list of disposers
    * @param disposerID Optional id for the disposer
    * @returns disposerID
    */
   public addDisposer(
-    disposer: SideEffectDisposer,
+    disposer: SideEffectDisposer | SideEffectDisposer[],
     disposerID: string = this.genUID()
   ): string {
     this.flush(disposerID);
-    this.disposers.set(disposerID, disposer);
+    this.disposers.set(
+      disposerID,
+      Array.isArray(disposer) ? () => disposer.forEach(invoke) : disposer
+    );
     return disposerID;
   }
 
   /**
    * Add a side effect.
-   * @param executor execute side effect
+   * @param executor executes side effect, returns a disposer or a list of disposers
    * @param disposerID Optional id for the disposer
    * @returns disposerID
    */
   public add(
-    executor: () => SideEffectDisposer,
+    executor: () => SideEffectDisposer | SideEffectDisposer[],
     disposerID: string = this.genUID()
   ): string {
     return this.addDisposer(executor(), disposerID);
@@ -147,13 +151,7 @@ export class SideEffectManager {
    * Remove and run all of the disposers.
    */
   public flushAll(): void {
-    this.disposers.forEach(disposer => {
-      try {
-        disposer();
-      } catch (e) {
-        console.error(e);
-      }
-    });
+    this.disposers.forEach(invoke);
     this.disposers.clear();
   }
 

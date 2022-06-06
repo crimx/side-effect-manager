@@ -177,6 +177,39 @@ describe("add", () => {
 
     spy.mockRestore();
   });
+
+  it("should accept a list of disposes returned from executor", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const executer = jest.fn();
+    const disposer1 = jest.fn();
+    const disposer2 = jest.fn();
+
+    sideEffect.add(async () => {
+      executer("execute1");
+      return [disposer1, disposer2];
+    });
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(1);
+    expect(executer).lastCalledWith("execute1");
+    expect(disposer1).toBeCalledTimes(0);
+    expect(disposer2).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+
+    sideEffect.add(() => {
+      executer("execute2");
+      return [disposer1, disposer2];
+    });
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(2);
+    expect(executer).lastCalledWith("execute2");
+    expect(disposer1).toBeCalledTimes(0);
+    expect(disposer2).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(2);
+  });
 });
 
 describe("addDisposer", () => {
@@ -189,6 +222,20 @@ describe("addDisposer", () => {
     await sideEffect.finished;
 
     expect(disposer).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(1);
+  });
+
+  it("should add a list of disposers", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const disposers = Array.from({ length: 5 }).map(() => jest.fn());
+
+    sideEffect.addDisposer(disposers);
+
+    await sideEffect.finished;
+
+    disposers.forEach(disposer => {
+      expect(disposer).toBeCalledTimes(0);
+    });
     expect(sideEffect.disposers.size).toBe(1);
   });
 
@@ -273,6 +320,35 @@ describe("remove", () => {
 
     expect(executer).toBeCalledTimes(1);
     expect(disposer).toBeCalledTimes(0);
+    expect(sideEffect.disposers.size).toBe(0);
+  });
+
+  it("should remove a side effect with a list of disposers", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const executer = jest.fn();
+    const disposers = Array.from({ length: 5 }).map(() => jest.fn());
+
+    const disposerID = sideEffect.add(async () => {
+      executer("execute");
+      return disposers;
+    });
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(1);
+    disposers.forEach(disposer => {
+      expect(disposer).toBeCalledTimes(0);
+    });
+    expect(sideEffect.disposers.size).toBe(1);
+
+    sideEffect.remove(disposerID);
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(1);
+    disposers.forEach(disposer => {
+      expect(disposer).toBeCalledTimes(0);
+    });
     expect(sideEffect.disposers.size).toBe(0);
   });
 
@@ -388,6 +464,35 @@ describe("flush", () => {
 
     expect(executer).toBeCalledTimes(1);
     expect(disposer).toBeCalledTimes(1);
+    expect(sideEffect.disposers.size).toBe(0);
+  });
+
+  it("should flush a side effect with a list of disposers", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+    const executer = jest.fn();
+    const disposers = Array.from({ length: 5 }).map(() => jest.fn());
+
+    const disposerID = sideEffect.add(async () => {
+      executer("execute");
+      return disposers;
+    });
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(1);
+    disposers.forEach(disposer => {
+      expect(disposer).toBeCalledTimes(0);
+    });
+    expect(sideEffect.disposers.size).toBe(1);
+
+    sideEffect.flush(disposerID);
+
+    await sideEffect.finished;
+
+    expect(executer).toBeCalledTimes(1);
+    disposers.forEach(disposer => {
+      expect(disposer).toBeCalledTimes(1);
+    });
     expect(sideEffect.disposers.size).toBe(0);
   });
 
