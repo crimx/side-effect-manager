@@ -93,6 +93,27 @@ sideEffect.add(() => {
 });
 ```
 
+If the side effect returns a disposer function directly you can also:
+
+```js
+import Emittery from "emittery";
+import { Remitter } from "remitter";
+
+const emittery = new Emittery();
+const remitter = new Remitter();
+
+sideEffect.addDisposer(
+  remitter.on("event1", eventData => console.log(eventData))
+);
+
+// Or an array of disposers
+sideEffect.addDisposer([
+  remitter.on("event1", eventData => console.log(eventData)),
+  remitter.on("event2", eventData => console.log(eventData)),
+  emittery.on("event3", eventData => console.log(eventData)),
+]);
+```
+
 There are also sugars for `addEventListener`, `setTimeout` and `setInterval`.
 
 ```js
