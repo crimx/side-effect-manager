@@ -49,6 +49,24 @@ describe("add", () => {
     expect(sideEffect.disposers.size).toBe(2);
   });
 
+  it("should ignore disposer if executor returns null or false", async () => {
+    const sideEffect = new AsyncSideEffectManager();
+
+    const disposerID1 = sideEffect.add(() => {
+      return null;
+    });
+
+    const disposerID2 = sideEffect.add(() => {
+      return false;
+    });
+
+    await sideEffect.finished;
+
+    expect(sideEffect.disposers.size).toBe(0);
+    expect(sideEffect.disposers.get(disposerID1)).toBe(undefined);
+    expect(sideEffect.disposers.get(disposerID2)).toBe(undefined);
+  });
+
   it("should return disposerID when adding a side effect", async () => {
     const sideEffect = new AsyncSideEffectManager();
     const disposer = jest.fn();

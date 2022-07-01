@@ -6,12 +6,14 @@ export type AsyncSideEffectDisposer = () => Promise<any> | any;
 export type AsyncSideEffectExecutor = () =>
   | Promise<AsyncSideEffectDisposer | AsyncSideEffectDisposer[]>
   | AsyncSideEffectDisposer
-  | AsyncSideEffectDisposer[];
+  | AsyncSideEffectDisposer[]
+  | null
+  | false;
 
 export class AsyncSideEffectManager {
   /**
    * Add a side effect.
-   * @param executor execute side effect
+   * @param executor Execute side effect. Return a disposer or a disposer array. Return null or false to ignore.
    * @param disposerID Optional id for the disposer
    * @returns disposerID
    */
@@ -44,12 +46,14 @@ export class AsyncSideEffectManager {
 
     try {
       const disposers = await executor();
-      this.disposers.set(
-        disposerID,
-        Array.isArray(disposers)
-          ? async () => Promise.all(disposers.map(invoke))
-          : disposers
-      );
+      if (disposers) {
+        this.disposers.set(
+          disposerID,
+          Array.isArray(disposers)
+            ? async () => Promise.all(disposers.map(invoke))
+            : disposers
+        );
+      }
     } catch (e) {
       console.error(e);
     }

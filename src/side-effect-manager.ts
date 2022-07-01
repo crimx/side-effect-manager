@@ -24,15 +24,16 @@ export class SideEffectManager {
 
   /**
    * Add a side effect.
-   * @param executor executes side effect, returns a disposer or a list of disposers
+   * @param executor Executes side effect. Return a disposer or a list of disposers. Returns null or false to ignore.
    * @param disposerID Optional id for the disposer
    * @returns disposerID
    */
   public add(
-    executor: () => SideEffectDisposer | SideEffectDisposer[],
+    executor: () => SideEffectDisposer | SideEffectDisposer[] | null | false,
     disposerID: string = this.genUID()
   ): string {
-    return this.addDisposer(executor(), disposerID);
+    const disposers = executor();
+    return disposers ? this.addDisposer(disposers, disposerID) : disposerID;
   }
 
   /**
