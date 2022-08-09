@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/crimx/side-effect-manager/compare/v1.1.1...v1.1.2) (2022-08-09)
+
 ### [1.1.1](https://github.com/crimx/side-effect-manager/compare/v1.1.0...v1.1.1) (2022-07-01)
 
 ## [1.1.0](https://github.com/crimx/side-effect-manager/compare/v0.1.6...v1.1.0) (2022-06-06)
