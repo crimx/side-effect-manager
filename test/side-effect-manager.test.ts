@@ -133,12 +133,12 @@ describe("add", () => {
   });
 });
 
-describe("addDisposer", () => {
+describe("push", () => {
   it("should add a disposer", () => {
     const sideEffect = new SideEffectManager();
     const disposer = jest.fn();
 
-    sideEffect.addDisposer(disposer);
+    sideEffect.push(disposer);
 
     expect(disposer).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(1);
@@ -148,7 +148,7 @@ describe("addDisposer", () => {
     const sideEffect = new SideEffectManager();
     const disposers = Array.from({ length: 5 }).map(() => jest.fn());
 
-    sideEffect.addDisposer(disposers);
+    sideEffect.push(disposers);
 
     disposers.forEach(disposer => {
       expect(disposer).toBeCalledTimes(0);
@@ -161,12 +161,12 @@ describe("addDisposer", () => {
     const disposer1 = jest.fn();
     const disposer2 = jest.fn();
 
-    sideEffect.addDisposer(disposer1);
+    sideEffect.push(disposer1);
 
     expect(disposer1).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(1);
 
-    sideEffect.addDisposer(disposer2);
+    sideEffect.push(disposer2);
 
     expect(disposer2).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(2);
@@ -176,7 +176,7 @@ describe("addDisposer", () => {
     const sideEffect = new SideEffectManager();
     const disposer = jest.fn();
 
-    const disposerID = sideEffect.addDisposer(disposer);
+    const disposerID = sideEffect.push(disposer);
 
     expect(disposer).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(1);
@@ -187,17 +187,14 @@ describe("addDisposer", () => {
     const sideEffect = new SideEffectManager();
     const disposer = jest.fn();
 
-    const disposerID = sideEffect.addDisposer(() => disposer("dispose1"));
+    const disposerID = sideEffect.push(() => disposer("dispose1"));
 
     expect(disposer).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(1);
 
     disposer.mockReset();
 
-    const disposerID2 = sideEffect.addDisposer(
-      () => disposer("dispose2"),
-      disposerID
-    );
+    const disposerID2 = sideEffect.push(() => disposer("dispose2"), disposerID);
 
     expect(disposerID2).toBe(disposerID);
     expect(disposer).toBeCalledTimes(1);

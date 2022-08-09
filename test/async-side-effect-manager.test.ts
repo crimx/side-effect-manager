@@ -230,12 +230,12 @@ describe("add", () => {
   });
 });
 
-describe("addDisposer", () => {
+describe("push", () => {
   it("should add a disposer", async () => {
     const sideEffect = new AsyncSideEffectManager();
     const disposer = jest.fn();
 
-    sideEffect.addDisposer(disposer);
+    sideEffect.push(disposer);
 
     await sideEffect.finished;
 
@@ -247,7 +247,7 @@ describe("addDisposer", () => {
     const sideEffect = new AsyncSideEffectManager();
     const disposers = Array.from({ length: 5 }).map(() => jest.fn());
 
-    sideEffect.addDisposer(disposers);
+    sideEffect.push(disposers);
 
     await sideEffect.finished;
 
@@ -262,14 +262,14 @@ describe("addDisposer", () => {
     const disposer1 = jest.fn();
     const disposer2 = jest.fn();
 
-    sideEffect.addDisposer(disposer1);
+    sideEffect.push(disposer1);
 
     await sideEffect.finished;
 
     expect(disposer1).toBeCalledTimes(0);
     expect(sideEffect.disposers.size).toBe(1);
 
-    sideEffect.addDisposer(disposer2);
+    sideEffect.push(disposer2);
 
     await sideEffect.finished;
 
@@ -281,7 +281,7 @@ describe("addDisposer", () => {
     const sideEffect = new AsyncSideEffectManager();
     const disposer = jest.fn();
 
-    const disposerID = sideEffect.addDisposer(disposer);
+    const disposerID = sideEffect.push(disposer);
 
     await sideEffect.finished;
 
@@ -294,7 +294,7 @@ describe("addDisposer", () => {
     const sideEffect = new AsyncSideEffectManager();
     const disposer = jest.fn();
 
-    const disposerID = sideEffect.addDisposer(() => disposer("dispose1"));
+    const disposerID = sideEffect.push(() => disposer("dispose1"));
 
     await sideEffect.finished;
 
@@ -303,10 +303,7 @@ describe("addDisposer", () => {
 
     disposer.mockReset();
 
-    const disposerID2 = sideEffect.addDisposer(
-      () => disposer("dispose2"),
-      disposerID
-    );
+    const disposerID2 = sideEffect.push(() => disposer("dispose2"), disposerID);
 
     await sideEffect.finished;
 

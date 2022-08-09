@@ -23,6 +23,15 @@ export class SideEffectManager {
   }
 
   /**
+   * @alias addDisposer
+   * Add a disposer directly.
+   * @param disposer a disposer or a list of disposers
+   * @param disposerID Optional id for the disposer
+   * @returns disposerID
+   */
+  public push = this.addDisposer;
+
+  /**
    * Add a side effect.
    * @param executor Executes side effect. Return a disposer or a list of disposers. Returns null or false to ignore.
    * @param disposerID Optional id for the disposer
