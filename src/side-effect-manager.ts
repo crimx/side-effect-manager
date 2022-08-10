@@ -17,7 +17,7 @@ export class SideEffectManager {
     this.flush(disposerID);
     this.disposers.set(
       disposerID,
-      Array.isArray(disposer) ? () => disposer.forEach(invoke) : disposer
+      Array.isArray(disposer) ? joinDisposers(disposer) : disposer
     );
     return disposerID;
   }
@@ -177,4 +177,13 @@ export class SideEffectManager {
     } while (this.disposers.has(uid));
     return uid;
   }
+}
+
+/**
+ * Join multiple disposers into on disposer
+ */
+export function joinDisposers(
+  disposers: SideEffectDisposer[]
+): SideEffectDisposer {
+  return () => disposers.forEach(invoke);
 }

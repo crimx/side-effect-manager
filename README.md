@@ -190,3 +190,8 @@ You can always `await asyncSideEffect.finished` which will be updated and resolv
 ```js
 await asyncSideEffect.finished;
 ```
+
+### Helpers
+
+- `joinDisposers` Join multiple disposers into on disposer
+- `joinAsyncDisposers` Join multiple disposers into on disposer and wait until all disposers are resolved.

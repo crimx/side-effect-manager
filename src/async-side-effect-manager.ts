@@ -49,9 +49,7 @@ export class AsyncSideEffectManager {
       if (disposers) {
         this.disposers.set(
           disposerID,
-          Array.isArray(disposers)
-            ? async () => Promise.all(disposers.map(invoke))
-            : disposers
+          Array.isArray(disposers) ? joinAsyncDisposers(disposers) : disposers
         );
       }
     } catch (e) {
@@ -179,4 +177,13 @@ export class AsyncSideEffectManager {
       this._resolveFinished = undefined;
     }
   }
+}
+
+/**
+ * Join multiple disposers into on disposer and wait until all disposers are resolved.
+ */
+export function joinAsyncDisposers(
+  disposers: AsyncSideEffectDisposer[]
+): AsyncSideEffectDisposer {
+  return () => Promise.all(disposers.map(invoke));
 }
