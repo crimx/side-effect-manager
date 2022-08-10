@@ -10,9 +10,9 @@
 const SOUP =
   "!#%()*+,-./:;=?@[]^_`{|}~" +
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const SOUP_LEN = SOUP.length;
+const SOUP_LEN = 87; // SOUP.length;
 const ID_LEN = 20;
-const reusedIdCarrier = Array(ID_LEN);
+const reusedIdCarrier: string[] = [];
 
 /**
  * Generate a unique ID, from Blockly.  This should be globally unique.
