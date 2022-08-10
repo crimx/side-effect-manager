@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/crimx/side-effect-manager/compare/v1.1.2...v1.1.3) (2022-08-10)
+
+
+### Features
+
+* add joinDisposers ([efb262d](https://github.com/crimx/side-effect-manager/commit/efb262d1b7d6388a3266b630529be5b4a1e59a37))
+
 ### [1.1.2](https://github.com/crimx/side-effect-manager/compare/v1.1.1...v1.1.2) (2022-08-09)
 
 ### [1.1.1](https://github.com/crimx/side-effect-manager/compare/v1.1.0...v1.1.1) (2022-07-01)
