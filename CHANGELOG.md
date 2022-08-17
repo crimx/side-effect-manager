@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/crimx/side-effect-manager/compare/v1.1.3...v1.2.0) (2022-08-17)
+
+
+### Features
+
+* add Disposable ([6905508](https://github.com/crimx/side-effect-manager/commit/69055089dfa9cb4bafb9618a58d3799ba5f4549a))
+
 ### [1.1.3](https://github.com/crimx/side-effect-manager/compare/v1.1.2...v1.1.3) (2022-08-10)
 
 
