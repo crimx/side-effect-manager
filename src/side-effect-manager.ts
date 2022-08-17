@@ -149,11 +149,7 @@ export class SideEffectManager {
   public flush(disposerID: string): void {
     const disposer = this.remove(disposerID);
     if (disposer) {
-      try {
-        disposer();
-      } catch (e) {
-        console.error(e);
-      }
+      disposer();
     }
   }
 

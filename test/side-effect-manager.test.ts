@@ -445,26 +445,26 @@ describe("flush", () => {
     expect(sideEffect.disposers.size).toBe(0);
   });
 
-  it("should catch error in disposer", () => {
-    const sideEffect = new SideEffectManager();
-    const spy = jest.spyOn(window.console, "error").mockImplementation();
-    const error = new Error();
+  // it("should catch error in disposer", () => {
+  //   const sideEffect = new SideEffectManager();
+  //   const spy = jest.spyOn(window.console, "error").mockImplementation();
+  //   const error = new Error();
 
-    const disposerID = sideEffect.add(() => {
-      return () => {
-        throw error;
-      };
-    });
+  //   const disposerID = sideEffect.add(() => {
+  //     return () => {
+  //       throw error;
+  //     };
+  //   });
 
-    expect(window.console.error).toBeCalledTimes(0);
+  //   expect(window.console.error).toBeCalledTimes(0);
 
-    sideEffect.flush(disposerID);
+  //   sideEffect.flush(disposerID);
 
-    expect(window.console.error).toBeCalledTimes(1);
-    expect(window.console.error).toBeCalledWith(error);
+  //   expect(window.console.error).toBeCalledTimes(1);
+  //   expect(window.console.error).toBeCalledWith(error);
 
-    spy.mockRestore();
-  });
+  //   spy.mockRestore();
+  // });
 });
 
 describe("flushAll", () => {
