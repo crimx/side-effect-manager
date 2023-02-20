@@ -4,7 +4,7 @@ import { invoke } from "./utils";
 export type AsyncSideEffectDisposer = () => Promise<any> | any;
 
 export type AsyncSideEffectExecutor = () =>
-  | Promise<AsyncSideEffectDisposer | AsyncSideEffectDisposer[]>
+  | Promise<AsyncSideEffectDisposer | AsyncSideEffectDisposer[] | null | false>
   | AsyncSideEffectDisposer
   | AsyncSideEffectDisposer[]
   | null
@@ -21,19 +21,19 @@ export class AsyncSideEffectManager {
     executor: AsyncSideEffectExecutor,
     disposerID: string = this.genUID()
   ): string {
-    if (this._isRunning.has(disposerID)) {
-      this._nextTask.set(disposerID, () => this._add(executor, disposerID));
+    if (this._isRunning_.has(disposerID)) {
+      this._nextTask_.set(disposerID, () => this._add_(executor, disposerID));
     } else {
-      this._add(executor, disposerID);
+      this._add_(executor, disposerID);
     }
     return disposerID;
   }
 
-  private async _add(
+  private async _add_(
     executor: AsyncSideEffectExecutor,
     disposerID: string
   ): Promise<void> {
-    this._startTask(disposerID);
+    this._startTask_(disposerID);
 
     const disposer = this.remove(disposerID);
     if (disposer) {
@@ -56,11 +56,11 @@ export class AsyncSideEffectManager {
       console.error(e);
     }
 
-    this._endTask(disposerID);
+    this._endTask_(disposerID);
 
-    const task = this._nextTask.get(disposerID);
+    const task = this._nextTask_.get(disposerID);
     if (task) {
-      this._nextTask.delete(disposerID);
+      this._nextTask_.delete(disposerID);
       task();
     }
   }
@@ -102,28 +102,28 @@ export class AsyncSideEffectManager {
    * @param disposerID
    */
   public flush(disposerID: string): void {
-    if (this._isRunning.has(disposerID)) {
-      this._nextTask.set(disposerID, () => this._flush(disposerID));
+    if (this._isRunning_.has(disposerID)) {
+      this._nextTask_.set(disposerID, () => this._flush_(disposerID));
     } else {
-      this._flush(disposerID);
+      this._flush_(disposerID);
     }
   }
 
-  private async _flush(disposerID: string): Promise<void> {
+  private async _flush_(disposerID: string): Promise<void> {
     const disposer = this.remove(disposerID);
     if (disposer) {
-      this._startTask(disposerID);
+      this._startTask_(disposerID);
       try {
         await disposer();
       } catch (e) {
         console.error(e);
       }
-      this._endTask(disposerID);
+      this._endTask_(disposerID);
     }
 
-    const task = this._nextTask.get(disposerID);
+    const task = this._nextTask_.get(disposerID);
     if (task) {
-      this._nextTask.delete(disposerID);
+      this._nextTask_.delete(disposerID);
       task();
     }
   }
@@ -139,7 +139,7 @@ export class AsyncSideEffectManager {
    * @returns a Promise resolved when current tasks are finished.
    */
   public finished: Promise<void> = Promise.resolve();
-  private _resolveFinished?: () => void;
+  private _resolveFinished_?: () => void;
 
   /**
    * All disposers. Use this only when you know what you are doing.
@@ -154,27 +154,27 @@ export class AsyncSideEffectManager {
     return uid;
   }
 
-  private readonly _nextTask = new Map<string, () => any>();
-  private readonly _isRunning = new Set<string>();
+  private readonly _nextTask_ = new Map<string, () => any>();
+  private readonly _isRunning_ = new Set<string>();
 
-  private _startTask(disposerID: string): void {
-    this._isRunning.add(disposerID);
-    if (!this._resolveFinished) {
+  private _startTask_(disposerID: string): void {
+    this._isRunning_.add(disposerID);
+    if (!this._resolveFinished_) {
       this.finished = new Promise(resolve => {
-        this._resolveFinished = resolve;
+        this._resolveFinished_ = resolve;
       });
     }
   }
 
-  private _endTask(disposerID: string): void {
-    this._isRunning.delete(disposerID);
+  private _endTask_(disposerID: string): void {
+    this._isRunning_.delete(disposerID);
     if (
-      this._resolveFinished &&
-      this._isRunning.size <= 0 &&
-      this._nextTask.size <= 0
+      this._resolveFinished_ &&
+      this._isRunning_.size <= 0 &&
+      this._nextTask_.size <= 0
     ) {
-      this._resolveFinished();
-      this._resolveFinished = undefined;
+      this._resolveFinished_();
+      this._resolveFinished_ = undefined;
     }
   }
 }
